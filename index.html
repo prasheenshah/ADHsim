@@ -83,11 +83,12 @@
   <script>
     // === First Animation (ADHlow) ===
     const adhlowFrames = [];
-    const adhlowTotal = 88;
-    for (let i = 1; i <= adhlowTotal; i++) {
-      const num = String(i).padStart(5, '0');
-      adhlowFrames.push(`ADHlow/frame_${num}.png`);
-    }
+    const adhlowTotal = 84;
+   for (let i = 1; i <= adhlowTotal; i++) {
+  const num = String(i).padStart(5, '0');
+  adhlowFrames.push(`adhlow/frame_${num}.png`);
+}
+
 
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
