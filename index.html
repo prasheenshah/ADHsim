@@ -111,7 +111,7 @@
     }
 
     function run() {
-      const fps = 8; // or 24
+      const fps = 8; // change to 24 for smoother
 const frameDuration = 1000 / fps;
 let lastTime = 0;
 
@@ -121,6 +121,15 @@ function run(timestamp) {
 
   if (delta >= frameDuration) {
     drawFrame(currentFrame);
+
+    if (currentFrame === 43 && !pausedAt44) {
+      pausedAt44 = true;
+      playing = false;
+      document.getElementById('popup').style.display = 'block';
+      lastTime = 0; // reset timer
+      return;
+    }
+
     currentFrame++;
     lastTime = timestamp;
   }
@@ -132,6 +141,7 @@ function run(timestamp) {
     lastTime = 0; // reset for replay
   }
 }
+
 
 
     document.getElementById('playButton').addEventListener('click', playAnimation);
