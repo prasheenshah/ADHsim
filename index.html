@@ -81,77 +81,97 @@
   </div>
 
   <script>
-  // === First Animation (ADHlow) ===
-  const adhlowFrames = [];
-  const adhlowTotal = 84;
-  for (let i = 1; i <= adhlowTotal; i++) {
-    const num = String(i).padStart(5, '0');
-    adhlowFrames.push(`adhlow/frame_${num}.png`);
-  }
+// === First Animation (ADHlow) ===
+const adhlowFrames = [];
+const adhlowTotal = 84;
+for (let i = 1; i <= adhlowTotal; i++) {
+  const num = String(i).padStart(5, '0');
+  adhlowFrames.push(`adhlow/frame_${num}.png`);
+}
 
-  const canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
-  let currentFrame = 0;
-  let playing = false;
-  let pausedAt44 = false;
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let currentFrame = 0;
+let playing = false;
+let pausedAt44 = false;
+let questionAskedOnce = false; // track if the question was asked already
 
-  function drawFrame(index) {
-    const img = new Image();
-    img.src = adhlowFrames[index];
-    img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  }
+function drawFrame(index) {
+  const img = new Image();
+  img.src = adhlowFrames[index];
+  img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+}
 
-  const fps = 8; // adjust to 12 or 24 as needed
-  const frameDuration = 1000 / fps;
-  let lastTime = 0;
+const fps = 8; // adjust playback speed
+const frameDuration = 1000 / fps;
+let lastTime = 0;
 
-  function playAnimation() {
-    if (playing) return;
-    playing = true;
-    currentFrame = 0;
-    pausedAt44 = false;
-    lastTime = 0;
-    run();
-  }
+function playAnimation() {
+  if (playing) return;
+  playing = true;
+  currentFrame = 0;
+  pausedAt44 = false;
+  lastTime = 0;
+  run();
+}
 
-  function run(timestamp) {
-    if (!lastTime) lastTime = timestamp;
-    const delta = timestamp - lastTime;
+function run(timestamp) {
+  if (!lastTime) lastTime = timestamp;
+  const delta = timestamp - lastTime;
 
-    if (delta >= frameDuration) {
-      drawFrame(currentFrame);
+  if (delta >= frameDuration) {
+    drawFrame(currentFrame);
 
-      if (currentFrame === 43 && !pausedAt44) {
-        pausedAt44 = true;
-        playing = false;
-        document.getElementById('popup').style.display = 'block';
-        lastTime = 0;
-        return;
+    if (currentFrame === 43 && !pausedAt44) {
+      pausedAt44 = true;
+      playing = false;
+
+      const popup = document.getElementById('popup');
+      const findOutButton = document.getElementById('findOut');
+
+      // Change button text depending on whether this is the first time
+      if (!questionAskedOnce) {
+        popup.style.display = 'block';
+        findOutButton.textContent = 'Find Out';
+      } else {
+        popup.style.display = 'block';
+        findOutButton.textContent = 'Resume';
       }
 
-      currentFrame++;
-      lastTime = timestamp;
+      lastTime = 0;
+      return;
     }
 
-    if (currentFrame < adhlowTotal && playing) {
-      requestAnimationFrame(run);
-    } else if (currentFrame >= adhlowTotal) {
-      playing = false;
-      lastTime = 0;
-    }
+    currentFrame++;
+    lastTime = timestamp;
   }
 
-  document.getElementById('playButton').addEventListener('click', playAnimation);
+  if (currentFrame < adhlowTotal && playing) {
+    requestAnimationFrame(run);
+  } else if (currentFrame >= adhlowTotal) {
+    playing = false;
+    lastTime = 0;
+  }
+}
 
-  document.getElementById('findOut').addEventListener('click', () => {
-    document.getElementById('popupText').textContent =
-      "ADH drops to excrete free water, urine becomes dilute so both osmolarity and urine sodium drop. RAAS is not involved because volume is okay.";
-    setTimeout(() => {
-      document.getElementById('popup').style.display = 'none';
-      playing = true;
-      run();
-    }, 3000);
-  });
+document.getElementById('playButton').addEventListener('click', playAnimation);
+
+document.getElementById('findOut').addEventListener('click', () => {
+  questionAskedOnce = true; // mark that the question has been asked once
+
+  document.getElementById('popupText').textContent =
+    "ADH drops to excrete free water, urine becomes dilute so both osmolarity and urine sodium drop. RAAS is not involved because volume is okay.";
+
+  // Use longer delay on first time, shorter delay after
+  const delay = questionAskedOnce ? 1000 : 3000;
+
+  setTimeout(() => {
+    document.getElementById('popup').style.display = 'none';
+    playing = true;
+    run();
+  }, delay);
+});
+
 
   // === Second Animation (ADH + REVERSEADH) ===
   const adhFrames = [];
