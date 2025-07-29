@@ -64,7 +64,7 @@
 <body>
   <h1>What happens to ADH usually when we drink too much water?</h1>
   <canvas id="canvas" width="800" height="450"></canvas>
-  <button id="playButton">Pour a gallon of water to see how the body should respond</button>
+  <button id="playButton">Pour a liter of water to see how the body should respond</button>
 
   <div id="popup">
     <p id="popupText">What do you think will happen to the urine osmolarity and urine sodium?</p>
@@ -160,7 +160,7 @@ document.getElementById('findOut').addEventListener('click', () => {
   questionAskedOnce = true; // mark that the question has been asked once
 
   document.getElementById('popupText').textContent =
-    "ADH drops to excrete excess free water, urine becomes dilute so both osmolarity and urine sodium drop. You can still become hyponatremic even with a suppressed ADH if you overwhelm the kidneys capacity or do not have enough solute to excrete water. This is why states like polydipsia and low solute intake have urine osm < 200, urine sodium < 25, and can rapidly reverse once they stop drinking water or get enough solute.";
+    "ADH drops to excrete excess free water, urine becomes dilute so both osmolarity and urine sodium drop. You can still become hyponatremic even with a suppressed ADH if your water intake exceeds your output. This can happen if:\n\n" +  "1. You drink a truly excessive amount (polydipsia). \n" + "2. You don't have enough solute to excrete all the water. \n" + "3. You have kidneys with poor max diluting capacity. \n" + "Because ADH is already low in these states with urine osm < 200, these patients can rapidly excrete water and overcorrect once they stop drinking water or get enough solute." ;
 
   // Use longer delay on first time, shorter delay after
   const delay = questionAskedOnce ? 1000 : 3000;
