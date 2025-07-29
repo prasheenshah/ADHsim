@@ -152,7 +152,9 @@ function run(timestamp) {
     playing = false;
     lastTime = 0;
   }
-}
+} // <-- this closes the run() function
+
+document.getElementById('playButton').addEventListener('click', playAnimation);
 
 document.getElementById('findOut').addEventListener('click', () => {
   questionAskedOnce = true; // mark that the question has been asked once
@@ -176,6 +178,7 @@ document.getElementById('findOut').addEventListener('click', () => {
     run();
   };
 });
+
 
 
 
