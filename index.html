@@ -154,23 +154,29 @@ function run(timestamp) {
   }
 }
 
-document.getElementById('playButton').addEventListener('click', playAnimation);
-
 document.getElementById('findOut').addEventListener('click', () => {
   questionAskedOnce = true; // mark that the question has been asked once
 
-  document.getElementById('popupText').textContent =
-    "ADH drops to excrete excess free water, urine becomes dilute so both osmolarity and urine sodium drop. You can still become hyponatremic even with a suppressed ADH if your water intake exceeds your output. This can happen if:\n\n" +  "1. You drink a truly excessive amount (polydipsia). \n" + "2. You don't have enough solute to excrete all the water. \n" + "3. You have kidneys with poor max diluting capacity. \n" + "Because ADH is already low in these states with urine osm < 200, these patients can rapidly excrete water and overcorrect once they stop drinking water or get enough solute." ;
+  document.getElementById('popupText').innerHTML = `
+    <p>ADH drops to excrete excess free water, urine becomes dilute so both osmolarity and urine sodium drop.</p>
+    <p>You can still become hyponatremic even with a suppressed ADH if your water intake exceeds your output. This can happen if:</p>
+    <ol style="margin-left: 1em;">
+      <li>You drink a truly excessive amount (polydipsia).</li><br>
+      <li>You don't have enough solute to excrete all the water.</li><br>
+      <li>You have kidneys with poor max diluting capacity.</li>
+    </ol>
+    <p>Because ADH is already low in these states with urine osm &lt; 200, these patients can rapidly excrete water and overcorrect once they stop drinking water or get enough solute.</p>
+  `;
 
-  // Use longer delay on first time, shorter delay after
-  const delay = questionAskedOnce ? 1000 : 3000;
-
-  setTimeout(() => {
+  const findOutButton = document.getElementById('findOut');
+  findOutButton.textContent = 'Resume';
+  findOutButton.onclick = () => {
     document.getElementById('popup').style.display = 'none';
     playing = true;
     run();
-  }, delay);
+  };
 });
+
 
 
   // === Second Animation (ADH + REVERSEADH) ===
