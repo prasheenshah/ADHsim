@@ -15,7 +15,7 @@
     }
     h1, h2 {
       font-size: 2em;
-      margin: 20px 0;
+      margin: 60px 0 20px 0;
     }
     canvas {
       background-color: transparent;
@@ -41,18 +41,20 @@
       background-color: #666;
     }
     #popup {
-      background-color: rgba(0,0,0,0.8);
-      color: #fff;
-      position: fixed;
-      top: 20%;
-      right: 5%;
-      padding: 20px;
-      border: 3px solid #fff;
-      width: 300px;
-      display: none;
-      z-index: 10;
-      text-align: left;
-    }
+  background-color: rgba(0,0,0,0.8);
+  color: #fff;
+  position: fixed;
+  top: 10%;         /* was 20%, moves it higher */
+  right: 5%;
+  padding: 15px;    /* slightly smaller padding */
+  border: 3px solid #fff;
+  width: 280px;     /* slightly narrower */
+  display: none;
+  z-index: 10;
+  text-align: left;
+  font-size: 0.95em; /* optional: makes text fit better */
+}
+
     input[type=range] {
       width: 80%;
       max-width: 800px;
@@ -95,6 +97,8 @@ let currentFrame = 0;
 let playing = false;
 let pausedAt44 = false;
 let questionAskedOnce = false; // track if the question was asked already
+// Draw the first frame of ADHlow on load
+drawFrame(0);
 
 function drawFrame(index) {
   const img = new Image();
