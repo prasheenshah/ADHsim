@@ -70,6 +70,7 @@
 <body>
   <h1>What happens to ADH usually when we drink too much water?</h1>
   <canvas id="canvas" width="800" height="450"></canvas>
+  <input type="range" id="scrubber1" min="1" max="84" value="1">
   <button id="playButton">Pour a liter of water to see how the body should respond</button>
 
   <div id="popup">
@@ -219,6 +220,13 @@ findOutButton.style.display = 'none'; // Hide original Learn More button
   document.getElementById('closeButton').onclick = () => {
     document.getElementById('popup').style.display = 'none';
     findOutButton.style.display = 'inline-block'; 
+    const scrubber1 = document.getElementById('scrubber1');
+scrubber1.addEventListener('input', () => {
+  playing = false;               // pause if scrubbing manually
+  currentFrame = parseInt(scrubber1.value) - 1;
+  drawFrame(currentFrame);
+});
+
     };
   };
 }
