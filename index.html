@@ -130,6 +130,8 @@ function run(timestamp) {
 
   if (delta >= frameDuration) {
     drawFrame(currentFrame);
+    document.getElementById('scrubber1').value = currentFrame + 1;
+
 
     // Pause at frame 43 and show the first popup
     if (currentFrame === 43 && !pausedAt44) {
