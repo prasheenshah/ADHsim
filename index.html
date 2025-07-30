@@ -221,6 +221,7 @@ findOutButton.style.display = 'none'; // Hide original Learn More button
 
   // === Second Animation (ADH + REVERSEADH) ===
   // === Second Animation (ADH + REVERSEADH) ===
+// === Second Animation (ADH + REVERSEADH) ===
 const adhFrames = [];
 const adhTotal = 84;
 for (let i = 1; i <= adhTotal; i++) {
@@ -242,77 +243,92 @@ let adhPlaying = false;
 let adhDirection = 1; // 1 = forward, -1 = backward
 let usingReverse = false;
 
+// === Frame rate control ===
+const fps2 = 8; // slow down to 8 fps
+const frameDuration2 = 1000 / fps2;
+let lastTime2 = 0;
+
 function drawFrame2(index, reverse=false) {
   const img = new Image();
   img.src = reverse ? reverseFrames[index] : adhFrames[index];
   img.onload = () => ctx2.drawImage(img, 0, 0, canvas2.width, canvas2.height);
 }
 
-function runADH() {
+function runADH(timestamp) {
   if (!adhPlaying) return;
 
-  if (!usingReverse) {
-    drawFrame2(currentFrame2);
+  if (!lastTime2) lastTime2 = timestamp;
+  const delta = timestamp - lastTime2;
 
-    // === Pause at frame 24 when playing forward ===
-    if (adhDirection === 1 && currentFrame2 === 24) {
-      adhPlaying = false;
+  if (delta >= frameDuration2) {
+    lastTime2 = timestamp;
 
-      const popup = document.getElementById('popup');
-      const findOutButton = document.getElementById('findOut');
+    if (!usingReverse) {
+      drawFrame2(currentFrame2);
 
-      document.getElementById('popupText').textContent =
-        "ADH is up and the kidney is now actively reabsorbing water and concentrating the urine. What will happen when I keep adding water?";
-      popup.style.display = 'block';
-      popup.style.left = '5%';   // position left
-      popup.style.right = 'auto';
+      // === Pause at frame 24 when playing forward ===
+      if (adhDirection === 1 && currentFrame2 === 24) {
+        adhPlaying = false;
 
-      findOutButton.textContent = 'Find Out';
-      findOutButton.onclick = () => {
+        const popup = document.getElementById('popup');
+        const findOutButton = document.getElementById('findOut');
+
         document.getElementById('popupText').textContent =
-          "Water intake exceeds water output, and the serum osmolarity and serum sodium start dropping as the extracellular fluid becomes more dilute.";
+          "ADH is up and the kidney is now actively reabsorbing water and concentrating the urine. What will happen when I keep adding water?";
+        popup.style.display = 'block';
+        popup.style.left = '5%';   // position left
+        popup.style.right = 'auto';
+        popup.style.top = '25%';   // move popup lower
 
-        findOutButton.textContent = 'Resume';
+        findOutButton.textContent = 'Find Out';
         findOutButton.onclick = () => {
-          document.getElementById('popup').style.display = 'none';
-          adhPlaying = true;
-          runADH();
+          document.getElementById('popupText').textContent =
+            "Water intake exceeds water output, and the serum osmolarity and serum sodium start dropping as the extracellular fluid becomes more dilute.";
+
+          findOutButton.textContent = 'Resume';
+          findOutButton.onclick = () => {
+            document.getElementById('popup').style.display = 'none'; // ✅ hide popup
+            adhPlaying = true;
+            runADH();
+          };
         };
-      };
 
-      return; // stop playback until Resume clicked
-    }
+        return; // stop playback until Resume clicked
+      }
 
-    currentFrame2 += adhDirection;
+      currentFrame2 += adhDirection;
 
-    // === End of video pause and popup ===
-    if (adhDirection === 1 && currentFrame2 >= adhTotal) {
-      adhPlaying = false;
-      showFinalADHPopup();
-      return;
-    }
+      // === End of video pause and popup ===
+      if (adhDirection === 1 && currentFrame2 >= adhTotal) {
+        adhPlaying = false;
+        showFinalADHPopup();
+        return;
+      }
 
-    if (adhDirection === -1 && currentFrame2 > 54) {
-      requestAnimationFrame(runADH);
-    } else if (adhDirection === -1 && currentFrame2 <= 54) {
-      usingReverse = true;
-      currentFrame2 = 40;
-      requestAnimationFrame(runADH);
-    } else if (adhDirection === 1 && currentFrame2 < adhTotal) {
-      requestAnimationFrame(runADH);
-    }
-  } else {
-    drawFrame2(currentFrame2, true);
-    currentFrame2--;
-    if (currentFrame2 >= 0) {
-      requestAnimationFrame(runADH);
+      if (adhDirection === -1 && currentFrame2 > 54) {
+        requestAnimationFrame(runADH);
+      } else if (adhDirection === -1 && currentFrame2 <= 54) {
+        usingReverse = true;
+        currentFrame2 = 40;
+        requestAnimationFrame(runADH);
+      } else if (adhDirection === 1 && currentFrame2 < adhTotal) {
+        requestAnimationFrame(runADH);
+      }
     } else {
-      adhPlaying = false;
-      usingReverse = false;
+      drawFrame2(currentFrame2, true);
+      currentFrame2--;
+      if (currentFrame2 >= 0) {
+        requestAnimationFrame(runADH);
+      } else {
+        adhPlaying = false;
+        usingReverse = false;
+      }
     }
-  }
 
-  document.getElementById('scrubber').value = currentFrame2 + 1;
+    document.getElementById('scrubber').value = currentFrame2 + 1;
+  } else {
+    requestAnimationFrame(runADH);
+  }
 }
 
 // === Final popup function ===
@@ -323,8 +339,9 @@ function showFinalADHPopup() {
   document.getElementById('popupText').textContent =
     "So why would my body keep ADH up to conserve water even though I am hyponatremic?";
   popup.style.display = 'block';
-  popup.style.left = 'auto';   // move back to right if needed
+  popup.style.left = 'auto';
   popup.style.right = '5%';
+  popup.style.top = '20%'; // slightly lower than default to avoid overlap
 
   findOutButton.textContent = 'Learn More';
   findOutButton.onclick = () => {
@@ -346,11 +363,10 @@ function showFinalADHPopup() {
     document.getElementById('turnOffButton').onclick = () => {
       document.getElementById('popup').style.display = 'none';
       findOutButton.style.display = 'inline-block';
-      // Call the same logic as Decrease ADH button
       adhPlaying = true;
       adhDirection = -1;
       usingReverse = false;
-      currentFrame2 = adhTotal - 1; // start from the end
+      currentFrame2 = adhTotal - 1;
       runADH();
     };
 
@@ -367,6 +383,7 @@ document.getElementById('increaseADH').addEventListener('click', () => {
   adhDirection = 1;
   usingReverse = false;
   currentFrame2 = 0;
+  lastTime2 = 0;
   runADH();
 });
 
@@ -375,6 +392,7 @@ document.getElementById('decreaseADH').addEventListener('click', () => {
   adhDirection = -1;
   usingReverse = false;
   currentFrame2 = parseInt(document.getElementById('scrubber').value) - 1;
+  lastTime2 = 0;
   runADH();
 });
 
@@ -393,6 +411,7 @@ scrubber.addEventListener('input', () => {
 
 // Draw first frame of ADH on load
 drawFrame2(0);
+
 
 </script>
 
