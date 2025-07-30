@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ADH Simulator</title>
@@ -16,7 +17,8 @@
     h1, h2 {
       font-size: 2em;
       margin: 80px 0 20px 0;
-    }
+  font-family: 'Gloria Hallelujah', cursive;
+}
     canvas {
       background-color: transparent;
       width: 80%;
@@ -44,7 +46,7 @@
   background-color: rgba(0,0,0,0.8);
   color: #fff;
   position: fixed;
-  top: 16%;         /* was 20%, moves it higher */
+  top: 17%;         /* was 20%, moves it higher */
   right: 5%;
   padding: 15px;    /* slightly smaller padding */
   border: 3px solid #fff;
@@ -96,9 +98,6 @@ const ctx = canvas.getContext('2d');
 let currentFrame = 0;
 let playing = false;
 let pausedAt44 = false;
-let questionAskedOnce = false; // track if the question was asked already
-// Draw the first frame of ADHlow on load
-drawFrame(0);
 
 function drawFrame(index) {
   const img = new Image();
@@ -106,9 +105,12 @@ function drawFrame(index) {
   img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 }
 
-const fps = 8; // adjust playback speed
+const fps = 8;
 const frameDuration = 1000 / fps;
 let lastTime = 0;
+
+// Draw the first frame on page load
+drawFrame(0);
 
 function playAnimation() {
   if (playing) return;
@@ -126,6 +128,7 @@ function run(timestamp) {
   if (delta >= frameDuration) {
     drawFrame(currentFrame);
 
+    // Pause at frame 43 and show the first popup
     if (currentFrame === 43 && !pausedAt44) {
       pausedAt44 = true;
       playing = false;
@@ -133,14 +136,21 @@ function run(timestamp) {
       const popup = document.getElementById('popup');
       const findOutButton = document.getElementById('findOut');
 
-      // Change button text depending on whether this is the first time
-      if (!questionAskedOnce) {
-        popup.style.display = 'block';
-        findOutButton.textContent = 'Find Out';
-      } else {
-        popup.style.display = 'block';
+      document.getElementById('popupText').textContent =
+        "What do you think will happen to the urine?";
+      popup.style.display = 'block';
+      findOutButton.textContent = 'Find Out';
+
+      findOutButton.onclick = () => {
+        document.getElementById('popupText').textContent =
+          "ADH drops and the kidney excretes the excess free water. Urine becomes dilute so both osmolarity and urine sodium drop. Urine osmolarity is usually less than 200 but can get as low as 50, urine sodium is variable but is lower the more dilute the urine is";
         findOutButton.textContent = 'Resume';
-      }
+        findOutButton.onclick = () => {
+          document.getElementById('popup').style.display = 'none';
+          playing = true;
+          run();
+        };
+      };
 
       lastTime = 0;
       return;
@@ -150,38 +160,61 @@ function run(timestamp) {
     lastTime = timestamp;
   }
 
-  if (currentFrame < adhlowTotal && playing) {
-    requestAnimationFrame(run);
-  } else if (currentFrame >= adhlowTotal) {
-    playing = false;
-    lastTime = 0;
-  }
-} // <-- this closes the run() function
+if (currentFrame < adhlowTotal && playing) {
+  requestAnimationFrame(run);
+} else if (currentFrame >= adhlowTotal) {
+  playing = false;
+  lastTime = 0;
+  showSecondPopup();
+}
+}
 
 document.getElementById('playButton').addEventListener('click', playAnimation);
 
-document.getElementById('findOut').addEventListener('click', () => {
-  questionAskedOnce = true; // mark that the question has been asked once
-
-  document.getElementById('popupText').innerHTML = `
-    <p>ADH drops and the kidney excretes the excess free water. Urine becomes dilute so both osmolarity and urine sodium drop. Urine osmolarity is usually less than 200 but can get as low as 50, urine sodium is variable but is lower the more dilute the urine is.</p>
-    <p>You can still become hyponatremic even with a suppressed ADH if your water intake exceeds your output. This can happen if:</p>
-    <ol style="margin-left: 1em;">
-      <li>You drink a truly excessive amount (polydipsia).</li><br>
-      <li>You don't have enough solute to excrete all the water.</li><br>
-      <li>You have kidneys with poor max diluting capacity.</li>
-    </ol>
-    <p>Because ADH is already low in these states with urine osm &lt; 200, these patients can rapidly excrete water and overcorrect once they stop drinking water or get enough solute.</p>
-  `;
-
+// === Second popup at the end ===
+function showSecondPopup() {
+  const popup = document.getElementById('popup');
   const findOutButton = document.getElementById('findOut');
-  findOutButton.textContent = 'Resume';
+
+document.getElementById('popupText').textContent =
+  "So how can you get hyponatremic even with a suppressed ADH and dilute urine?";
+popup.style.display = 'block';
+findOutButton.textContent = 'Learn More';
+
+
   findOutButton.onclick = () => {
+    // Replace popup content once with the answer + buttons
+    document.getElementById('popupText').innerHTML = `
+      <p>You can still become hyponatremic even with a suppressed ADH if your water intake exceeds your output. This can happen if:</p>
+      <ol style="margin-left: 1em;">
+        <li>You drink a truly excessive amount (polydipsia).</li><br>
+        <li>You don't have enough solute to excrete all the water.</li><br>
+        <li>You have kidneys with poor max diluting capacity.</li>
+      </ol>
+      <p>Because ADH is already low in these states with urine osm &lt; 200, these patients can rapidly excrete water and overcorrect once they stop drinking water or get enough solute.</p>
+      <div style="margin-top: 15px;">
+        <button id="restartButton">Restart</button>
+        <button id="closeButton">Close</button>
+      </div>
+    `;
+    
+findOutButton.style.display = 'none'; // Hide original Learn More button
+    
+    // Attach event listeners to the new buttons
+    document.getElementById('restartButton').onclick = () => {
     document.getElementById('popup').style.display = 'none';
-    playing = true;
-    run();
+    findOutButton.style.display = 'inline-block'; // Restore for next time
+    currentFrame = 0;
+    playAnimation();
   };
-});
+
+  document.getElementById('closeButton').onclick = () => {
+    document.getElementById('popup').style.display = 'none';
+    findOutButton.style.display = 'inline-block'; 
+    };
+  };
+}
+
 
 
 
