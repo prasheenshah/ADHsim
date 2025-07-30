@@ -44,7 +44,7 @@
   background-color: rgba(0,0,0,0.8);
   color: #fff;
   position: fixed;
-  top: 16%;         /* was 20%, moves it higher */
+  top: 17%;         /* was 20%, moves it higher */
   right: 5%;
   padding: 15px;    /* slightly smaller padding */
   border: 3px solid #fff;
@@ -96,9 +96,6 @@ const ctx = canvas.getContext('2d');
 let currentFrame = 0;
 let playing = false;
 let pausedAt44 = false;
-let questionAskedOnce = false; // track if the question was asked already
-// Draw the first frame of ADHlow on load
-drawFrame(0);
 
 function drawFrame(index) {
   const img = new Image();
@@ -106,9 +103,12 @@ function drawFrame(index) {
   img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 }
 
-const fps = 8; // adjust playback speed
+const fps = 8;
 const frameDuration = 1000 / fps;
 let lastTime = 0;
+
+// Draw the first frame on page load
+drawFrame(0);
 
 function playAnimation() {
   if (playing) return;
@@ -126,6 +126,7 @@ function run(timestamp) {
   if (delta >= frameDuration) {
     drawFrame(currentFrame);
 
+    // Pause at frame 43 and show the first popup
     if (currentFrame === 43 && !pausedAt44) {
       pausedAt44 = true;
       playing = false;
@@ -133,14 +134,21 @@ function run(timestamp) {
       const popup = document.getElementById('popup');
       const findOutButton = document.getElementById('findOut');
 
-      // Change button text depending on whether this is the first time
-      if (!questionAskedOnce) {
-        popup.style.display = 'block';
-        findOutButton.textContent = 'Find Out';
-      } else {
-        popup.style.display = 'block';
+      document.getElementById('popupText').textContent =
+        "What do you think will happen to the urine?";
+      popup.style.display = 'block';
+      findOutButton.textContent = 'Find Out';
+
+      findOutButton.onclick = () => {
+        document.getElementById('popupText').textContent =
+          "ADH drops to excrete excess free water, urine becomes dilute so both osmolarity and urine sodium drop.";
         findOutButton.textContent = 'Resume';
-      }
+        findOutButton.onclick = () => {
+          document.getElementById('popup').style.display = 'none';
+          playing = true;
+          run();
+        };
+      };
 
       lastTime = 0;
       return;
@@ -155,33 +163,41 @@ function run(timestamp) {
   } else if (currentFrame >= adhlowTotal) {
     playing = false;
     lastTime = 0;
+    showSecondPopup();
   }
-} // <-- this closes the run() function
+}
 
 document.getElementById('playButton').addEventListener('click', playAnimation);
 
-document.getElementById('findOut').addEventListener('click', () => {
-  questionAskedOnce = true; // mark that the question has been asked once
-
-  document.getElementById('popupText').innerHTML = `
-    <p>ADH drops to excrete excess free water, urine becomes dilute so both osmolarity and urine sodium drop.</p>
-    <p>You can still become hyponatremic even with a suppressed ADH if your water intake exceeds your output. This can happen if:</p>
-    <ol style="margin-left: 1em;">
-      <li>You drink a truly excessive amount (polydipsia).</li><br>
-      <li>You don't have enough solute to excrete all the water.</li><br>
-      <li>You have kidneys with poor max diluting capacity.</li>
-    </ol>
-    <p>Because ADH is already low in these states with urine osm &lt; 200, these patients can rapidly excrete water and overcorrect once they stop drinking water or get enough solute.</p>
-  `;
-
+// === Second popup at the end ===
+function showSecondPopup() {
+  const popup = document.getElementById('popup');
   const findOutButton = document.getElementById('findOut');
-  findOutButton.textContent = 'Resume';
+
+  document.getElementById('popupText').textContent =
+    "So how can you get hyponatremic even with a suppressed ADH and dilute urine?";
+  popup.style.display = 'block';
+  findOutButton.textContent = 'Learn More';
+
   findOutButton.onclick = () => {
-    document.getElementById('popup').style.display = 'none';
-    playing = true;
-    run();
+    document.getElementById('popupText').innerHTML = `
+      <p>You can still become hyponatremic even with a suppressed ADH if your water intake exceeds your output. This can happen if:</p>
+      <ol style="margin-left: 1em;">
+        <li>You drink a truly excessive amount (polydipsia).</li><br>
+        <li>You don't have enough solute to excrete all the water.</li><br>
+        <li>You have kidneys with poor max diluting capacity.</li>
+      </ol>
+      <p>Because ADH is already low in these states with urine osm &lt; 200, these patients can rapidly excrete water and overcorrect once they stop drinking water or get enough solute.</p>
+    `;
+    findOutButton.textContent = 'Restart';
+    findOutButton.onclick = () => {
+      document.getElementById('popup').style.display = 'none';
+      currentFrame = 0;
+      playAnimation();
+    };
   };
-});
+}
+
 
 
 
