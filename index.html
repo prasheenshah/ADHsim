@@ -220,7 +220,6 @@ findOutButton.style.display = 'none'; // Hide original Learn More button
 
 
   // === Second Animation (ADH + REVERSEADH) ===
-  // === Second Animation (ADH + REVERSEADH) ===
 // === Second Animation (ADH + REVERSEADH) ===
 const adhFrames = [];
 const adhTotal = 84;
@@ -244,7 +243,7 @@ let adhDirection = 1; // 1 = forward, -1 = backward
 let usingReverse = false;
 
 // === Frame rate control ===
-const fps2 = 8; // slow down to 8 fps
+const fps2 = 8;
 const frameDuration2 = 1000 / fps2;
 let lastTime2 = 0;
 
@@ -266,7 +265,7 @@ function runADH(timestamp) {
     if (!usingReverse) {
       drawFrame2(currentFrame2);
 
-      // === Pause at frame 24 when playing forward ===
+      // === Pause at frame 24 ===
       if (adhDirection === 1 && currentFrame2 === 24) {
         adhPlaying = false;
 
@@ -276,29 +275,33 @@ function runADH(timestamp) {
         document.getElementById('popupText').textContent =
           "ADH is up and the kidney is now actively reabsorbing water and concentrating the urine. What will happen when I keep adding water?";
         popup.style.display = 'block';
-        popup.style.left = '5%';   // position left
+        popup.style.left = '5%';
         popup.style.right = 'auto';
-        popup.style.top = '25%';   // move popup lower
+        popup.style.top = '25%';
 
         findOutButton.textContent = 'Find Out';
-        findOutButton.onclick = () => {
+
+        // First click = show answer
+        findOutButton.onclick = function showAnswer() {
           document.getElementById('popupText').textContent =
             "Water intake exceeds water output, and the serum osmolarity and serum sodium start dropping as the extracellular fluid becomes more dilute.";
 
           findOutButton.textContent = 'Resume';
-          findOutButton.onclick = () => {
-            document.getElementById('popup').style.display = 'none'; // ✅ hide popup
+
+          // Second click = resume animation
+          findOutButton.onclick = function resumePlay() {
+            document.getElementById('popup').style.display = 'none';
             adhPlaying = true;
             runADH();
           };
         };
 
-        return; // stop playback until Resume clicked
+        return;
       }
 
       currentFrame2 += adhDirection;
 
-      // === End of video pause and popup ===
+      // === End of video pause ===
       if (adhDirection === 1 && currentFrame2 >= adhTotal) {
         adhPlaying = false;
         showFinalADHPopup();
@@ -331,7 +334,7 @@ function runADH(timestamp) {
   }
 }
 
-// === Final popup function ===
+// === Final popup ===
 function showFinalADHPopup() {
   const popup = document.getElementById('popup');
   const findOutButton = document.getElementById('findOut');
@@ -341,7 +344,7 @@ function showFinalADHPopup() {
   popup.style.display = 'block';
   popup.style.left = 'auto';
   popup.style.right = '5%';
-  popup.style.top = '20%'; // slightly lower than default to avoid overlap
+  popup.style.top = '20%';
 
   findOutButton.textContent = 'Learn More';
   findOutButton.onclick = () => {
@@ -358,7 +361,7 @@ function showFinalADHPopup() {
       </div>
     `;
 
-    findOutButton.style.display = 'none'; // hide the old button
+    findOutButton.style.display = 'none';
 
     document.getElementById('turnOffButton').onclick = () => {
       document.getElementById('popup').style.display = 'none';
@@ -411,6 +414,8 @@ scrubber.addEventListener('input', () => {
 
 // Draw first frame of ADH on load
 drawFrame2(0);
+
+
 
 
 </script>
