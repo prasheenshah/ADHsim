@@ -160,13 +160,13 @@ function run(timestamp) {
     lastTime = timestamp;
   }
 
-  if (currentFrame < adhlowTotal && playing) {
-    requestAnimationFrame(run);
-  } else if (currentFrame >= adhlowTotal) {
-    playing = false;
-    lastTime = 0;
-    showSecondPopup();
-  }
+if (currentFrame < adhlowTotal && playing) {
+  requestAnimationFrame(run);
+} else if (currentFrame >= adhlowTotal) {
+  playing = false;
+  lastTime = 0;
+  showSecondPopup();
+}
 }
 
 document.getElementById('playButton').addEventListener('click', playAnimation);
@@ -182,6 +182,7 @@ function showSecondPopup() {
   findOutButton.textContent = 'Learn More';
 
   findOutButton.onclick = () => {
+    // Replace popup content once with the answer + buttons
     document.getElementById('popupText').innerHTML = `
       <p>You can still become hyponatremic even with a suppressed ADH if your water intake exceeds your output. This can happen if:</p>
       <ol style="margin-left: 1em;">
@@ -190,12 +191,21 @@ function showSecondPopup() {
         <li>You have kidneys with poor max diluting capacity.</li>
       </ol>
       <p>Because ADH is already low in these states with urine osm &lt; 200, these patients can rapidly excrete water and overcorrect once they stop drinking water or get enough solute.</p>
+      <div style="margin-top: 15px;">
+        <button id="restartButton">Restart</button>
+        <button id="closeButton">Close</button>
+      </div>
     `;
-    findOutButton.textContent = 'Restart';
-    findOutButton.onclick = () => {
+
+    // Attach event listeners to the new buttons
+    document.getElementById('restartButton').onclick = () => {
       document.getElementById('popup').style.display = 'none';
       currentFrame = 0;
       playAnimation();
+    };
+
+    document.getElementById('closeButton').onclick = () => {
+      document.getElementById('popup').style.display = 'none';
     };
   };
 }
