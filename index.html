@@ -136,11 +136,17 @@ function run(timestamp) {
       playing = false;
 
       const popup = document.getElementById('popup');
+popup.style.right = '5%';   // ✅ align right side
+popup.style.left = 'auto';  // ✅ remove any left override
+popup.style.top = '20%';    // ✅ put it back at original height
+popup.style.width = '300px'; // ✅ keep it narrow for the top video
+
       const findOutButton = document.getElementById('findOut');
 
       document.getElementById('popupText').textContent =
         "What do you think will happen to the urine?";
       popup.style.display = 'block';
+      
       findOutButton.textContent = 'Find Out';
 
       findOutButton.onclick = () => {
