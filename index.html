@@ -176,10 +176,11 @@ function showSecondPopup() {
   const popup = document.getElementById('popup');
   const findOutButton = document.getElementById('findOut');
 
-  document.getElementById('popupText').textContent =
-    "So how can you get hyponatremic even with a suppressed ADH and dilute urine?";
-  popup.style.display = 'block';
-  findOutButton.textContent = 'Learn More';
+document.getElementById('popupText').textContent =
+  "So how can you get hyponatremic even with a suppressed ADH and dilute urine?";
+popup.style.display = 'block';
+findOutButton.textContent = 'Learn More';
+
 
   findOutButton.onclick = () => {
     // Replace popup content once with the answer + buttons
