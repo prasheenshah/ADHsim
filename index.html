@@ -277,7 +277,7 @@ function runADH(timestamp) {
         popup.style.display = 'block';
         popup.style.left = '5%';
         popup.style.right = 'auto';
-        popup.style.top = '25%';
+        popup.style.top = '35%';
 
         findOutButton.textContent = 'Find Out';
 
@@ -343,9 +343,11 @@ function showFinalADHPopup() {
   document.getElementById('popupText').textContent =
     "So why would my body keep ADH up to conserve water even though I am hyponatremic?";
   popup.style.display = 'block';
-  popup.style.left = 'auto';
-  popup.style.right = '5%';
-  popup.style.top = '20%';
+  popup.style.left = '5%';
+  popup.style.right = 'auto';
+  popup.style.top = '35%';
+  popup.style.width = '400px';   // wider than default 300px
+
 
   findOutButton.textContent = 'Learn More';
   findOutButton.onclick = () => {
