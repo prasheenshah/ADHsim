@@ -52,6 +52,8 @@
   border: 3px solid #fff;
   width: 280px;     /* slightly narrower */
   display: none;
+  max-height: 70vh;       /* ✅ limit height to 70% of screen */
+  overflow-y: auto; 
   z-index: 10;
   text-align: left;
   font-size: 0.95em; /* optional: makes text fit better */
@@ -343,18 +345,18 @@ function showFinalADHPopup() {
   document.getElementById('popupText').textContent =
     "So why would my body keep ADH up to conserve water even though I am hyponatremic?";
   popup.style.display = 'block';
-  popup.style.left = '5%';
+  popup.style.left = '1%';
   popup.style.right = 'auto';
-  popup.style.top = '35%';
-  popup.style.width = '400px';   // wider than default 300px
+  popup.style.top = '30%';
+  popup.style.width = '350px';   // wider than default 300px
 
 
   findOutButton.textContent = 'Learn More';
   findOutButton.onclick = () => {
     document.getElementById('popupText').innerHTML = `
-      <p>Ideally your ADH would be drop and your urine would be maximally dilute to excrete free water every time you get hyponatremic, like you saw in the last video. However, there are many other non osmotic stimuli for ADH that can override this need and keep the urine osmolarity &gt; 200 even when your sodium is dangerously low:</p>
+      <p>There are many other non osmotic stimuli for ADH that can override the need to excrete free water and keep the urine osmolarity high even when your sodium is dangerously low:</p>
       <ol style="margin-left: 1em;">
-        <li><strong>Another powerful stimulus for ADH release is a decrease in blood pressure</strong> sensed by your baroreceptors, either from reduced cardiac output with hypervolemia, decompensated liver disease, or true hypovolemia. The key difference with conditions like this is that the body is also trying to conserve sodium and RAAS is up along with ADH. Unless the picture is muddied by diuretics, this means that your urine sodium will also be &lt; 25. These patients will have physical exam clues indicating too much or too little volume.</li><br>
+        <li><strong>Commonly a decrease in blood pressure</strong> sensed by your baroreceptors, either from reduced cardiac output with hypervolemia, decompensated liver disease, or true hypovolemia. The key difference with these conditions is that the body also tries to conserve sodium and RAAS is up along with ADH. Unless the picture is muddied by diuretics, this means that your urine sodium will also be &lt; 25. These patients may have physical exam clues indicating too much or too little volume.</li><br>
         <li><strong>Sometimes, ADH will go up by itself without RAAS even with normal volume status</strong> because it is being secreted by a tumor or the patient is in pain, nauseous, or certain medications like SSRIs. This is called SIADH, and compared to the other causes above RAAS is not active and the body is not trying to conserve sodium so urine sodium is usually &gt; 40 and the patient is euvolemic.</li><br>
       </ol>
       <p>In most cases of heart/liver disease and cancer related SIADH, the ADH is chronically elevated and won't easily reverse so they may be harder to treat and don't tend to overcorrect. However, if the patient has a temporary reason to conserve water due to hypovolemia, ADH can rapidly drop after they have been resuscitated causing massive water excretion and overcorrection - similar to patients with low solute and primary polydipsia.</p>
