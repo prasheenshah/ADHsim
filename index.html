@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ADH Simulator</title>
@@ -17,7 +17,7 @@
     h1, h2 {
       font-size: 2em;
       margin: 80px 0 20px 0;
-  font-family: 'Permanent Marker', cursive;
+  font-family: 'Gloria Hallelujah', cursive;
 }
     canvas {
       background-color: transparent;
@@ -196,16 +196,20 @@ function showSecondPopup() {
         <button id="closeButton">Close</button>
       </div>
     `;
-
+    
+findOutButton.style.display = 'none'; // Hide original Learn More button
+    
     // Attach event listeners to the new buttons
     document.getElementById('restartButton').onclick = () => {
-      document.getElementById('popup').style.display = 'none';
-      currentFrame = 0;
-      playAnimation();
-    };
+    document.getElementById('popup').style.display = 'none';
+    findOutButton.style.display = 'inline-block'; // Restore for next time
+    currentFrame = 0;
+    playAnimation();
+  };
 
-    document.getElementById('closeButton').onclick = () => {
-      document.getElementById('popup').style.display = 'none';
+  document.getElementById('closeButton').onclick = () => {
+    document.getElementById('popup').style.display = 'none';
+    findOutButton.style.display = 'inline-block'; 
     };
   };
 }
