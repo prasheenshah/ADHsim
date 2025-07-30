@@ -289,11 +289,12 @@ function runADH(timestamp) {
           findOutButton.textContent = 'Resume';
 
           // Second click = resume animation
-          findOutButton.onclick = function resumePlay() {
-            document.getElementById('popup').style.display = 'none';
-            adhPlaying = true;
-            runADH();
-          };
+         findOutButton.onclick = function resumePlay() {
+  document.getElementById('popup').style.display = 'none';
+  adhPlaying = true;
+  currentFrame2++; // ✅ advance 1 frame so it doesn’t hit frame 24 again
+  runADH();
+};
         };
 
         return;
